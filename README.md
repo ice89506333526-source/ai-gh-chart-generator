@@ -5,6 +5,8 @@ Turn an MP3 into a playable **Guitar Hero III (PC)** custom song — automatical
 Pick a song, press one button, and get a `notes.chart` + `song.wav` package ready
 to import with GHTCP. The charts also work in **Clone Hero** out of the box.
 
+![App screenshot](screenshots/chart%20generator1.jpg)
+
 - **Expert** track: melodic contour mapping (frets follow the melody), 2-note
   chords, sustains, Star Power, playability-revised (no sub-80 ms attack pairs)
 - **Hard** track: independent 4-lane design on a steady half-beat grid
@@ -83,7 +85,10 @@ In game: use **Practice → Part NN** sections to drill hard spots.
 - GHTCP community — GH3 PC custom song tooling
 
 If this tool saved you time and you feel like supporting the author:
-card **2204320615123140** (Ozon Bank) — QR in the app's ♥ button.
+
+- **International:** USDT on TON — `UQDFdVjxx81PCZFTiH8P9DKk89f48jccmBKbEjtMoWaAFvyb`
+  (scan the QR from the app's ♥ button with any wallet app)
+- **Россия:** карта **2204 3206 1512 3140** (Озон Банк) — QR в приложении
 
 ## License
 
