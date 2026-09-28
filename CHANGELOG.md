@@ -14,7 +14,12 @@ First public release.
 - Bilingual UI (English / Russian), listening previews before export
 - Windows exe (TensorFlow + Basic Pitch inside) and Python source
 
-## Unreleased
+## v1.0.1 — 2026-09-28
+
+- **Fix**: donation QR now shows correctly in the "Thank the author" window
+  (the PNG was missing from the exe bundle; both QR images are now embedded
+  with a fallback, and the QR is regenerated straight from the address)
+- Source bundle: both QR images included in `src/`, build command updated
 
 Planned:
 

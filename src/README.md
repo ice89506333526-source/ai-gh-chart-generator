@@ -70,8 +70,9 @@
 | `chart_export_report.json` | статистика: ноты, sustains, Star Power |
 | `CHECKLIST.md` | короткая памятка |
 
-Кнопка **«♥ Поблагодарить автора»** (правый нижний угол, с мини-QR прямо
-на кнопке) открывает окно с реквизитами и большим QR-кодом Озон банка.
+Кнопка **«♥ Поблагодарить автора»** (правый нижний угол) открывает окно
+с реквизитами: карта Озон (для РФ) и USDT в сети TON (для остального мира),
+с QR-кодом для сканирования кошельком.
 
 ---
 
@@ -160,7 +161,7 @@ D:\ai-gh\ai-gh-stage3\.venv\Scripts\python.exe D:\ai-gh\pipeline\gh3_maker_gui.p
 
 ```
 cd D:\ai-gh\pipeline
-D:\ai-gh\ai-gh-stage3\.venv\Scripts\python.exe -m PyInstaller --noconfirm --onefile --windowed --name "AI-GH-Chart-Generator" --add-data "donation_qr.jpg;." --add-data "config.json;." --collect-data basic_pitch --hidden-import basic_pitch.inference gh3_maker_gui.py --distpath dist --workpath build --specpath .
+D:\ai-gh\ai-gh-stage3\.venv\Scripts\python.exe -m PyInstaller --noconfirm --onefile --windowed --name "AI-GH-Chart-Generator" --add-data "donation_qr.jpg;." --add-data "ton_qr.png;." --add-data "config.json;." --collect-data basic_pitch --hidden-import basic_pitch.inference gh3_maker_gui.py --distpath dist --workpath build --specpath .
 ```
 
 ## Технические детали

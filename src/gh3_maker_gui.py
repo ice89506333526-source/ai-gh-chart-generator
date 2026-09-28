@@ -57,6 +57,11 @@ STRINGS = {
         "settings_frame": "2. Settings (usually not needed)",
         "bpm_label": "Tempo BPM (empty = auto):",
         "easier": "Make easier (sparser attacks)",
+        "hardkore": "Hardkore mode (DragonForce-style: dense, repeats kept, expert-only challenge)",
+        "hardkore_hint": (
+            "Notes down to ~60 ms, repeated attacks stay on one lane, min gap 40 ms. "
+            "Expert becomes deliberately brutal; the Hard track stays normal."
+        ),
         "hard_track": "Add the Hard track",
         "with_vocals": "Full song with vocals (separate the guitar)",
         "separation_hint": (
@@ -159,6 +164,11 @@ STRINGS = {
         "easier": "Сделать легче (реже атаки)",
         "hard_track": "Добавить дорожку Hard",
         "with_vocals": "Это песня с вокалом (отделить гитару)",
+        "hardkore": "Хардкор-режим (в стиле DragonForce: плотно, с повторами, только для эксперта)",
+        "hardkore_hint": (
+            "Ноты до ~60 мс, повторы остаются на одном ладу, минимальный интервал 40 мс. "
+            "Expert становится специально зверским; дорожка Hard остаётся обычной."
+        ),
         "separation_hint": (
             "Ноты строятся по гитаре без вокала (1–3 мин на видеокарте); "
             "аудио в игре остаётся оригинальной песней: гитара громче, вокал тише."
@@ -435,7 +445,7 @@ class App(Tk):
         super().__init__()
         self.lang = "en"  # English by default; RU via the toggle button
         self.title(APP_TITLE)
-        self.geometry("860x560")
+        self.geometry("860x640")
         self.minsize(760, 480)
 
         self.source = StringVar()
@@ -444,6 +454,7 @@ class App(Tk):
         self.artist = StringVar()
         self.bpm = StringVar()
         self.easier = BooleanVar(value=False)
+        self.hardkore = BooleanVar(value=False)
         self.include_hard = BooleanVar(value=True)
         self.separate = BooleanVar(value=False)
 
@@ -505,8 +516,14 @@ class App(Tk):
         widget_with_text(
             lambda **kw: ttk.Checkbutton(adv, variable=self.separate, **kw), "with_vocals",
         ).grid(row=1, column=0, columnspan=4, sticky="w", **pad)
+        widget_with_text(
+            lambda **kw: ttk.Checkbutton(adv, variable=self.hardkore, **kw), "hardkore",
+        ).grid(row=2, column=0, columnspan=4, sticky="w", **pad)
+        hk_hint = ttk.Label(adv, text=self.tr("hardkore_hint"), wraplength=780, justify="left")
+        hk_hint.grid(row=3, column=0, columnspan=4, sticky="w")
+        self._i18n_widgets.append((hk_hint, "hardkore_hint"))
         sep_hint = ttk.Label(adv, text=self.tr("separation_hint"), wraplength=780, justify="left")
-        sep_hint.grid(row=2, column=0, columnspan=4, sticky="w")
+        sep_hint.grid(row=4, column=0, columnspan=4, sticky="w")
         self._i18n_widgets.append((sep_hint, "separation_hint"))
 
         run = ttk.Frame(self)
@@ -674,6 +691,14 @@ class App(Tk):
             config = make_song.load_config(bundled_config_path())
             if self.easier.get():
                 config["expert"]["min_gap_seconds"] = 0.114
+            if self.hardkore.get():
+                self.log_line("Hardkore mode: dense transcription, lane repeats kept, 40 ms min gap")
+                config["expert"].update({
+                    "min_gap_seconds": 0.040,
+                    "validate_min_gap_seconds": 0.040,
+                })
+                config["transcription"]["minimum_note_length_ms"] = 60.0
+                config["expert"]["hardkore_keep_repeats"] = True
             if self.bpm.get().strip():
                 config["expert"]["user_bpm"] = float(self.bpm.get().replace(",", "."))
 
@@ -701,7 +726,8 @@ class App(Tk):
             self.set_status(self.tr("status_revise"))
 
             revised = stage.run("revise", make_song.stage_revise, gameplay, work, config)
-            validation = stage.run("validate", make_song.stage_validate, revised, grid["duration_seconds"])
+            validation = stage.run("validate", make_song.stage_validate, revised,
+                                   grid["duration_seconds"], config)
             make_song.write_json(work / "validation.json", validation)
             if validation["status"] != "pass":
                 raise RuntimeError(
@@ -823,7 +849,11 @@ class App(Tk):
             win, text=self.tr("donation_text"), justify="center",
             font=("Segoe UI", 10, "bold"),
         ).pack(padx=20, pady=(16, 8))
-        photo = load_qr_image("ton_qr.png", 380)
+        photo = None
+        for qr_name in ("ton_qr.png", "donation_qr.jpg"):
+            photo = load_qr_image(qr_name, 380)
+            if photo is not None:
+                break
         if photo is not None:
             ttk.Label(win, image=photo).pack(pady=6)
             win._qr_keepalive = photo  # prevent garbage collection of the image
@@ -894,7 +924,7 @@ def run_selftest() -> int:
         probe.append(f"_MEIPASS={base} frozen={getattr(sys, 'frozen', False)}")
         entries = sorted(_os.listdir(base))[:40]
         probe.append("root entries: " + ", ".join(entries))
-        for rel in ("config.json", "donation_qr.jpg"):
+        for rel in ("config.json", "donation_qr.jpg", "ton_qr.png"):
             p = base / rel
             kind = "DIR" if p.is_dir() else ("FILE" if p.is_file() else "MISSING")
             inner = sorted(_os.listdir(p))[:10] if p.is_dir() else "-"
@@ -921,6 +951,8 @@ def run_selftest() -> int:
         app.song_id.set(song_id)
         if len(sys.argv) > 4 and sys.argv[4] == "separate":
             app.separate.set(True)  # exercise the Demucs path too
+        if "--hardkore" in sys.argv[4:]:
+            app.hardkore.set(True)  # exercise the hardkore path too
         app.run_pipeline()  # synchronous in selftest
         if app.results and (Path(app.results["out"]) / "notes.chart").exists():
             status, detail = "OK", app.results["out"]
