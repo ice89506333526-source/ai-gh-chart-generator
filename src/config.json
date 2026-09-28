@@ -1,0 +1,56 @@
+{
+  "grid": {
+    "analysis_sample_rate": 22050,
+    "hop_length": 512,
+    "click_freq": 1500,
+    "click_duration": 0.035
+  },
+  "transcription": {
+    "onset_threshold": 0.5,
+    "frame_threshold": 0.3,
+    "minimum_note_length_ms": 127.7
+  },
+  "pitch_filter": {
+    "sub_bass_cut": 35,
+    "fretboard_hi": 74,
+    "above_fretboard_amplitude_gate": 0.55
+  },
+  "onsets": {
+    "grouping_window_seconds": 0.030,
+    "click_min_duration_seconds": 0.090,
+    "click_min_amplitude": 0.35
+  },
+  "expert": {
+    "max_chord_size": 2,
+    "contour_window_events": 8,
+    "sustain_minimum_beats": 0.5,
+    "sustain_gap_before_next_beats": 0.25,
+    "hopo_threshold_beats": 0.3333333333333333,
+    "forced_hopo_markers": false,
+    "min_gap_seconds": 0.080,
+    "star_power_phrase_beats": 8,
+    "star_power_spacing_beats": 64,
+    "star_power_minimum_events": 3,
+    "practice_section_beats": 32
+  },
+  "hard": {
+    "lanes": 4,
+    "bucket_beats": 0.5,
+    "chord_min_neighbor_gap_seconds": 0.25,
+    "sustain_minimum_beats": 0.5,
+    "sustain_gap_before_next_beats": 0.25,
+    "hopo_threshold_beats": 0.3333333333333333,
+    "star_power_phrase_beats": 8,
+    "star_power_spacing_beats": 64,
+    "star_power_minimum_events": 3
+  },
+  "audio": {
+    "lead_in_seconds": 4.0,
+    "tail_seconds": 2.0,
+    "peak_target": 0.999
+  },
+  "chart": {
+    "resolution": 192,
+    "time_signature": "TS 4"
+  }
+}
